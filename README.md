@@ -1,6 +1,6 @@
 # ALASTOR: Reconstructing the Provenance of Serverless Intrusions
 
-This code was implemented as part of the XXXX [1] paper. We provide a easy automated implementation of [ALASTOR: Reconstructing the Provenance of Serverless Intrusions](https://www.usenix.org/conference/usenixsecurity22/presentation/datta) (USENIX Security 22) [2], you can find the original code-base [here](https://bitbucket.org/sts-lab/alastor). We ask people to [cite](#References) both works when using the software for academic research papers.
+This code was implemented as part of the XXXX [1] paper. We provide an easy-to-run automated implementation of [ALASTOR: Reconstructing the Provenance of Serverless Intrusions](https://www.usenix.org/conference/usenixsecurity22/presentation/datta) (USENIX Security 22) [2], you can find the original code-base [here](https://bitbucket.org/sts-lab/alastor). We ask people to [cite](#References) both works when using the software for academic research papers.
 
 ## Introduction
 
