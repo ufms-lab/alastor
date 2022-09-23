@@ -5,10 +5,11 @@ useDotenv: true
 provider:
   name: aws
   runtime: nodejs16.x
-  memorySize: 1024
+  memorySize: ${env:MEMORY_SIZE}
   versionFunctions: false
   region: ${env:REGION}
   environment:
+    REGION: ${env:REGION}
     EPSAGONTOKEN: ${env:EPSAGONTOKEN}
   iam:
     role:
@@ -18,18 +19,22 @@ provider:
             - "lambda:InvokeFunction"
             - "lambda:InvokeAsync"
           Resource: arn:aws:lambda:us-east-2:*:*
-  
+
 
 functions:
   product-purchase:
     handler: ./hello-retail/product-purchase/handler.main
-    timeout: 900
-  product-purchase-authorize-cc:
-    handler: ./hello-retail/product-purchase-authorize-cc/handler.main
-    timeout: 900
+    timeout: ${env:TIMEOUT}
+    environment:
+      GETPRICE: ${env:REGION}
+      AUTHORIZECC: ${env:REGION}
+      PUBLISH: ${env:REGION}
   product-purchase-get-price:
     handler: ./hello-retail/product-purchase-get-price/handler.main
-    timeout: 900
+    timeout: ${env:TIMEOUT}
+  product-purchase-authorize-cc:
+    handler: ./hello-retail/product-purchase-authorize-cc/handler.main
+    timeout: ${env:TIMEOUT}
   product-purchase-publish:
     handler: ./hello-retail/product-purchase-publish/handler.main
-    timeout: 900
+    timeout: ${env:TIMEOUT}
