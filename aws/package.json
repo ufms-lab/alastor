@@ -4,7 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "deploy": "sls dpeloy",
+    "func:product-purchase-local": "sls invoke local -f product-purchase -s local",
+    "func:product-purchase-authorize-cc-local": "sls invoke local -f product-purchase-authorize-cc -s local",
+    "func:product-purchase-get-price-local": "sls invoke local -f product-purchase-get-price -s local",
+    "func:product-purchase-publish-local": "sls invoke local -f product-purchase-publish -s local",
+    "func:product-purchase": "sls invoke -f product-purchase",
+    "func:product-purchase-authorize-cc": "sls invoke -f product-purchase-authorize-cc",
+    "func:product-purchase-get-price": "sls invoke -f product-purchase-get-price",
+    "func:product-purchase-publish": "sls invoke -f product-purchase-publish"
   },
   "author": "AlisonVilela",
   "license": "MIT",
