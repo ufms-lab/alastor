@@ -1,0 +1,21 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: ${GATEWAY}
+functions:
+  product-purchase-${STAGE:-local}:
+    lang: node16-${TEMPLATE}
+    handler: ./hello-retail/product-purchase
+    image: ${DOCKER_USER}/product-purchase-${STAGE:-local}:latest
+  product-purchase-authorize-cc-${STAGE:-local}:
+    lang: node16-${TEMPLATE}
+    handler: ./hello-retail/product-purchase-authorize-cc
+    image: ${DOCKER_USER}/product-purchase-authorize-cc-${STAGE:-local}:latest
+  product-purchase-get-price-${STAGE:-local}:
+    lang: node16-${TEMPLATE}
+    handler: ./hello-retail/product-purchase-get-price
+    image: ${DOCKER_USER}/product-purchase-get-price-${STAGE:-local}:latest
+  product-purchase-publish-${STAGE:-local}:
+    lang: node16-${TEMPLATE}
+    handler: ./hello-retail/product-purchase-publish
+    image: ${DOCKER_USER}/product-purchase-publish-${STAGE:-local}:latest

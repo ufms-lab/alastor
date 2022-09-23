@@ -1,0 +1,8 @@
+[submodule "of-watchdog"]
+	path = of-watchdog
+	url = https://github.com/ufms-lab/of-watchdog
+	branch = alastor
+[submodule "deep-log"]
+	path = deep-log
+	url = https://github.com/ufms-lab/DeepLog
+	branch = master

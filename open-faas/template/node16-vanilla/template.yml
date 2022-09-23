@@ -1,0 +1,2 @@
+language: node16-vanilla
+fprocess: node index.js
