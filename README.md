@@ -10,9 +10,21 @@ In this work, we propose ALASTOR, a provenance-based auditing framework that ena
 
 ## Getting Started
 
+### AWS
 [AWS: Hello Retail with Edpsagon](aws/README.md)
 
+### OpenFaaS
 [OpenFaaS: Hello Retail Vanilla/Alastor](open-faas/README.md)
+
+### OpenFaaS: of-watchdog
+
+Add as Submodule
+
+To view the implementation of Alastor in of-watchdog, access the repository [ufms-lab/of-watchdog](https://github.com/ufms-lab/of-watchdog/tree/alastor)
+
+### DeepLog
+
+Add as Submodule
 
 ## References
 
