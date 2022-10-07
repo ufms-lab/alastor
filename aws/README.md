@@ -1,4 +1,4 @@
-# AWS: Hello Retail with Edpsagon
+# AWS: Hello Retail with Epsagon
 
 This project implements some Hello Retail functions as a proof of concept for [Alastor](../README.md).
 ## Development setup
@@ -59,5 +59,11 @@ npm run deploy
 ## Invoke Deployed (AWS account required*)
 
 ```bash
-npm run func:product-purchase
+npm run func:product-purchase-normal
+npm run func:product-purchase-download
+npm run func:product-purchase-exfiltrate
 ```
+## TO DO
+- Implement a database (dynamodb)
+- Identify why Epsagon is not tracking HTTP/HTTPS calls
+- Automate fake attack server

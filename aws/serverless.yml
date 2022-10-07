@@ -2,15 +2,20 @@ service: hello-retail
 
 useDotenv: true
 
+plugins:
+  - serverless-plugin-epsagon
+  - serverless-plugin-tracing
+
 provider:
   name: aws
-  runtime: nodejs16.x
+  stage: ${opt:stage, 'dev'}
+  runtime: nodejs12.x
   memorySize: ${env:MEMORY_SIZE}
   versionFunctions: false
   region: ${env:REGION}
   environment:
     REGION: ${env:REGION}
-    EPSAGONTOKEN: ${env:EPSAGONTOKEN}
+  tracing: ${env:ENABLE_XRAY} # enable tracing
   iam:
     role:
       statements:
@@ -19,16 +24,28 @@ provider:
             - "lambda:InvokeFunction"
             - "lambda:InvokeAsync"
           Resource: arn:aws:lambda:us-east-2:*:*
+        - Effect: "Allow" # xray permissions (required)
+          Action:
+            - "xray:PutTraceSegments"
+            - "xray:PutTelemetryRecords"
+          Resource:
+            - "*"
 
+custom:
+  epsagon:
+    token: ${env:EPSAGON_TOKEN}
+    appName: "Epsagon Application"
+    metadataOnly: ${env:EPSAGON_METADATA}
+    disable: ${env:DISABLE_EPSAGON}
 
 functions:
   product-purchase:
     handler: ./hello-retail/product-purchase/handler.main
     timeout: ${env:TIMEOUT}
     environment:
-      GETPRICE: ${env:REGION}
-      AUTHORIZECC: ${env:REGION}
-      PUBLISH: ${env:REGION}
+      GETPRICE: hello-retail-dev-product-purchase-get-price
+      AUTHORIZECC: hello-retail-dev-product-purchase-authorize-cc
+      PUBLISH: hello-retail-dev-product-purchase-publish
   product-purchase-get-price:
     handler: ./hello-retail/product-purchase-get-price/handler.main
     timeout: ${env:TIMEOUT}

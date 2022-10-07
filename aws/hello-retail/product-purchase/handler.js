@@ -1,66 +1,77 @@
-'use strict'
+'use strict';
 
-const { LambdaClient } = require("@aws-sdk/client-lambda");
+const awsXRay = require('aws-xray-sdk');
+const AWS = awsXRay.captureAWS(require("aws-sdk"));
 
-const client = new LambdaClient({ region: process.env.REGION });
+AWS.config.region = process.env.REGION
+
+const client = new AWS.Lambda();
 
 module.exports.main = async (event, context) => {
-  console.log('Function productPurchase running.');
+  console.log("Function productPurchase running. ");
 
   let price = null;
   let authorization = null;
 
   await Promise.all([invokeGetPrice(event), invokeAuthorizeCC(event)]).then(res => {
-    console.log(res);
-    price = JSON.parse(res[0].Payload);
-	  authorization = JSON.parse(res[1].Payload);
+    console.log("Promise all finished.")
+    const priceString = Buffer.from(res[0].Payload).toString('utf8');
+    price = JSON.parse(priceString);
+    console.log("Price: ", price)
+    const authorizationString = Buffer.from(res[1].Payload).toString('utf8');
+	  authorization = JSON.parse(authorizationString);
+    console.log("Authorization: ", authorization)
   });
 
   const publishResult = await invokePublish(event, price, authorization);
+  const publishString = Buffer.from(publishResult.Payload).toString('utf8');
+  const publishPayload = JSON.parse(publishString);
 
-  const publishPayload = JSON.parse(publishResult.Payload)
+  const result = publishPayload;
 
-  const result = publishPayload
-
-  return result
+  return result;
 };
 
-const invokeGetPrice = (event) => {
-  return client.send({
+const invokeGetPrice = async (event) => {
+  console.log("Invoke Function productPurchaseGetPrice.");
+  return client.invoke({
     FunctionName: process.env.GETPRICE,
     InvocationType: "RequestResponse",
     LogType: "Tail",
     Payload: JSON.stringify({ id: event.id })
-  })
-}
+  }).promise();
+};
 
-const invokeAuthorizeCC = (event) => {
+const invokeAuthorizeCC = async (event) => {
+  console.log("Invoke Function productPurchaseAuthorizeCC.");
   const AuthorizeCCArgs = {
     user: event.user,
     creditCard: event.creditCard
-  }
+  };
 
   // Check if this is an exploit, propagate to authcc function
   if (event.malicious) {
     AuthorizeCCArgs.malicious = event.malicious;
-    AuthorizeCCArgs.attackserver = event.attackserver;
-  }
+    AuthorizeCCArgs.attackServer = event.attackServer;
+    AuthorizeCCArgs.attackFile = event.attackFile;
+  };
 
-  return client.send({
+  return client.invoke({
     FunctionName: process.env.AUTHORIZECC,
     InvocationType: "RequestResponse",
     LogType: "Tail",
     Payload: JSON.stringify(AuthorizeCCArgs)
-  })
-}
+  }).promise();
+};
 
-const invokePublish = (event, price, authorization) => {
+const invokePublish = async (event, price, authorization) => {
+  console.log("Invoke Function productPurchasePublish.");
   const publishArgs = {
     id: event.id,
     price: price.price,
     user: event.user,
     authorization: authorization.authorization,
-  }
+  };
 
   if (!price.gotPrice) {
     publishArgs.approved = false;
@@ -70,12 +81,12 @@ const invokePublish = (event, price, authorization) => {
     publishArgs.failureReason = authorization.failureReason;
   } else {
     publishArgs.approved = true;
-  }
+  };
 
-  return client.send({
+  return client.invoke({
     FunctionName: process.env.PUBLISH,
     InvocationType: "RequestResponse",
     LogType: "Tail",
     Payload: JSON.stringify(publishArgs)
-  })
-}
+  }).promise();
+};

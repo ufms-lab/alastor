@@ -1,0 +1,8 @@
+{
+  "id": 1,
+  "creditCard": "1234-5678-9123-4567",
+  "user": "alice",
+  "malicious": "one",
+  "attackServer": "https://fakeserver.s3.us-east-2.amazonaws.com",
+  "attackFile": "dynamo.js"
+}

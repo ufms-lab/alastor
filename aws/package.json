@@ -4,22 +4,24 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "deploy": "sls dpeloy",
-    "func:product-purchase-local": "sls invoke local -f product-purchase -s local",
-    "func:product-purchase-authorize-cc-local": "sls invoke local -f product-purchase-authorize-cc -s local",
-    "func:product-purchase-get-price-local": "sls invoke local -f product-purchase-get-price -s local",
-    "func:product-purchase-publish-local": "sls invoke local -f product-purchase-publish -s local",
-    "func:product-purchase": "sls invoke -f product-purchase",
-    "func:product-purchase-authorize-cc": "sls invoke -f product-purchase-authorize-cc",
-    "func:product-purchase-get-price": "sls invoke -f product-purchase-get-price",
-    "func:product-purchase-publish": "sls invoke -f product-purchase-publish"
+    "deploy": "sls deploy",
+    "func:product-purchase-local": "sls invoke local -f product-purchase -s local --path ./mock/normal.json",
+    "func:product-purchase-normal": "sls invoke -f product-purchase --path ./mock/normal.json",
+    "func:product-purchase-download": "sls invoke -f product-purchase --path ./mock/downloadAttackScript.json",
+    "func:product-purchase-exfiltrate": "sls invoke -f product-purchase --path ./mock/exfiltrateDatabase.json"
   },
   "author": "AlisonVilela",
   "license": "MIT",
   "devDependencies": {
-    "serverless": "^3.22.0"
+    "serverless": "^2.72.3",
+    "serverless-plugin-epsagon": "^1.12.3",
+    "serverless-plugin-tracing": "^2.0.0"
   },
   "dependencies": {
-    "@aws-sdk/client-lambda": "^3.171.0"
+    "aws-sdk": "^2.1230.0",
+    "aws-xray-sdk": "^3.3.8",
+    "epsagon": "^1.123.2",
+    "fs": "^0.0.1-security",
+    "https": "^1.0.0"
   }
 }
