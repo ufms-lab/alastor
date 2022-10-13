@@ -5,6 +5,8 @@ init
 	aws (npm install)
 
 
-openfaas build/push/deploy or up (inside of folder)
+openfaas build/push/deploy or up (inside of folder) -f OpenFaas.yml
 
-aws npx sls invoke local -f <name-of-function> --data '{}' (inside of folder)
+PASSWORD=$(kubectl get secret -n openfaas basic-auth -o jsonpath="{.data.basic-auth-password}" | base64 --decode; echo) && echo $PASSWORD
+
+mock | faas-cli invoke product-purchase-${TEMPLATE}

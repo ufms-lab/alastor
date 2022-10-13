@@ -46,3 +46,9 @@ kubectl get pods -n openfaas
 ```bash
 kubectl port-forward -n openfaas svc/gateway 8080:8080
 ```
+
+```
+export DOCKER_USER=localhost:5000
+export TEMPLATE=vanilla
+export GATEWAY=http://127.0.0.1:8080
+```

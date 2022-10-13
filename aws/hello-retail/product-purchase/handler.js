@@ -29,6 +29,8 @@ module.exports.main = async (event, context) => {
 
   const result = publishPayload;
 
+  console.log('Result: ', result)
+
   return result;
 };
 
