@@ -8,9 +8,9 @@ functions:
     handler: ./hello-retail/product-purchase
     image: ${DOCKER_USER}/product-purchase:latest
     environment:
-      URL_GETPRICE: ${GATEWAY}/function/product-purchase-get-price-${TEMPLATE}
-      URL_AUTHORIZECC: ${GATEWAY}/function/product-purchase-authorize-cc-${TEMPLATE}
-      URL_PUBLISH: ${GATEWAY}/function/product-purchase-publish-${TEMPLATE}
+      URL_GETPRICE: http://gateway.openfaas:8080/function/product-purchase-get-price-${TEMPLATE}
+      URL_AUTHORIZECC: http://gateway.openfaas:8080/function/product-purchase-authorize-cc-${TEMPLATE}
+      URL_PUBLISH: http://gateway.openfaas:8080/function/product-purchase-publish-${TEMPLATE}
   product-purchase-authorize-cc-${TEMPLATE}:
     lang: node16-${TEMPLATE}
     handler: ./hello-retail/product-purchase-authorize-cc

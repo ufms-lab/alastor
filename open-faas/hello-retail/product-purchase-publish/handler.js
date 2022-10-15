@@ -5,12 +5,12 @@ module.exports.main = async (event, context) => {
 
   let purchaseEvent = {};
 
-  if (event.approved) {
+  if (event.body["approved"]) {
     purchaseEvent = {
-        productId: event.data["id"],
-        productPrice: event.data["price"],
-        userId: event.data["user"],
-        authorization: event.data["authorization"],
+        productId: event.body["id"],
+        productPrice: event.body["price"],
+        userId: event.body["user"],
+        authorization: event.body["authorization"],
         devFinished: 'false: might actually be finished.'
     };
 
@@ -19,10 +19,10 @@ module.exports.main = async (event, context) => {
         devFinished: 'false: might actually be finished.'
     };
 
-    if (typeof event.failureReason === 'string' || event.data["failureReason"] instanceof String) {
-        purchaseEvent.failureReason = event.data["failureReason"];
+    if (typeof event.body["failureReason"] === 'string' || event.body["failureReason"] instanceof String) {
+        purchaseEvent.failureReason = event.body["failureReason"];
     } else {
-        purchaseEvent.failureReason = {...event.data["failureReason"]};
+        purchaseEvent.failureReason = {...event.body["failureReason"]};
     }
   };
 

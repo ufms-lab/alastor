@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-const axios = require('axios')
+const axios = require("axios")
 
 module.exports.main = async (event, context) => {
   console.log("Function productPurchase running. ", event.body);
@@ -10,35 +10,36 @@ module.exports.main = async (event, context) => {
 
   await Promise.all([GetPrice(event), AuthorizeCC(event)]).then(res => {
     console.log("Promise all finished.")
-    price = res[0];
+    price = res[0]["data"];
     console.log("Price: ", price)
-    authorization = res[1];
+    authorization = res[1]["data"];
     console.log("Authorization: ", authorization)
   });
 
   const publishResult = await Publish(event, price, authorization);
 
-  const result = publishResult;
+  const result = publishResult["data"];
 
-  console.log('Result: ', result)
+  console.log("Result: ", result)
 
   return result;
 };
 
 const GetPrice = async (event) => {
-  console.log("call Function productPurchaseGetPrice.");
+  console.log("call Function productPurchaseGetPrice: ", process.env.URL_GETPRICE);
   const getPriceData = {
     "id": event.body["id"]
   };
+
   return axios({
-    method: 'post',
+    method: "post",
     url: process.env.URL_GETPRICE,
     data: getPriceData
   });
 };
   
 const AuthorizeCC = async (event) => {
-  console.log("Call Function productPurchaseAuthorizeCC.");
+  console.log("Call Function productPurchaseAuthorizeCC: ", process.env.URL_AUTHORIZECC);
   const AuthorizeCCData = {
     user: event.body["user"],
     creditCard: event.body["creditCard"]
@@ -51,19 +52,19 @@ const AuthorizeCC = async (event) => {
     AuthorizeCCData.attackFile = event.body["attackFile"];
   };
 
-  return axios({
-    method: 'post',
+  return await axios({
+    method: "post",
     url: process.env.URL_AUTHORIZECC,
     data: AuthorizeCCData
   });
 };
 
 const Publish = async (event, price, authorization) => {
-  console.log("Invoke Function productPurchasePublish.");
+  console.log("Invoke Function productPurchasePublish: ", process.env.URL_PUBLISH);
   const publishData = {
-    id: event.id,
+    id: event.body["id"],
     price: price.price,
-    user: event.user,
+    user: event.body["user"],
     authorization: authorization.authorization,
   };
 
@@ -77,8 +78,8 @@ const Publish = async (event, price, authorization) => {
     publishData.approved = true;
   };
 
-  return axios({
-    method: 'post',
+  return await axios({
+    method: "post",
     url: process.env.URL_PUBLISH,
     data: publishData
   });
